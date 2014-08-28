@@ -17,9 +17,10 @@ module Backup
       private
 
       def transfer!
-        FileUtils.mkdir_p(remote_path)
 
         if mount_usb
+          FileUtils.mkdir_p(remote_path)
+
           package.filenames.each do |filename|
             src = File.join(Config.tmp_path, filename)
             dest = File.join(remote_path, filename)
@@ -39,13 +40,13 @@ module Backup
 
       # Mount the usb and return status
       def mount_usb
-        `mount #{@usb_mount} 2>/dev/null`
+        `sudo mount #{@usb_mount} 2>/dev/null`
         mounted?
       end
 
       # Unmount the usb
       def umount_usb
-        `umount #{@usb_mount} 2>/dev/null`
+        `sudo umount #{@usb_mount} 2>/dev/null`
       end
 
       # Test if the USB is mounted or not
