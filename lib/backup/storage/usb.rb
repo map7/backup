@@ -40,13 +40,13 @@ module Backup
 
       # Mount the usb and return status
       def mount_usb
-        `sudo mount #{@usb_mount} 2>/dev/null`
+        `mount #{@usb_mount} 2>/dev/null`
         mounted?
       end
 
       # Unmount the usb
       def umount_usb
-        `sudo umount #{@usb_mount} 2>/dev/null`
+        `umount #{@usb_mount} 2>/dev/null`
       end
 
       # Test if the USB is mounted or not
