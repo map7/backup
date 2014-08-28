@@ -31,7 +31,6 @@ module Backup
       # Test if the USB is mounted or not
       def mounted?
         # See if the remote path is included in the mounts
-        puts @usb_mount
         mount_points.include?(@usb_mount)
       end
 
