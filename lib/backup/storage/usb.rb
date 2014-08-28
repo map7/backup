@@ -5,10 +5,13 @@ module Backup
     class Usb < Base
       class Error < Backup::Error; end
 
+      attr_accessor :usb_mount
+      
       def initialize(model, storage_id = nil)
         super
 
         @path ||= '~/backups'
+        @usb_mount ||= "/mnt"
       end
 
       private
@@ -28,8 +31,8 @@ module Backup
       # Test if the USB is mounted or not
       def mounted?
         # See if the remote path is included in the mounts
-        puts remote_path
-        mount_points.include?("/mnt/usb")
+        puts @usb_mount
+        mount_points.include?(@usb_mount)
       end
 
       # Get mount points from the system

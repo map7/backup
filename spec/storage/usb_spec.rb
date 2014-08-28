@@ -84,7 +84,8 @@ module Backup
         storage.package.stubs(:filenames).returns(
           ['test_trigger.tar-aa', 'test_trigger.tar-ab']
         )
-        storage.path = 'my/path'
+        storage.path = '/mnt/usb/my_backup'
+        storage.usb_mount = '/mnt/usb'
       end
 
       after { Timecop.return }
