@@ -54,23 +54,51 @@ module Backup
         model.storages << Storage::Usb.new(model)
       end
 
-      it 'copies the package files to their destination' do
-        FileUtils.expects(:mkdir_p).in_sequence(s).with(remote_path)
+      context "when usb is mounted" do
+        before do
+          storage.expects(:mounted?).returns(true)
+        end
+        
+        it 'copies the package files to their destination' do
+          FileUtils.expects(:mkdir_p).in_sequence(s).with(remote_path)
 
-        src = File.join(Config.tmp_path, 'test_trigger.tar-aa')
-        dest = File.join(remote_path, 'test_trigger.tar-aa')
-        Logger.expects(:info).in_sequence(s).with("Storing '#{ dest }'...")
-        FileUtils.expects(:cp).in_sequence(s).with(src, dest)
+          src = File.join(Config.tmp_path, 'test_trigger.tar-aa')
+          dest = File.join(remote_path, 'test_trigger.tar-aa')
+          Logger.expects(:info).in_sequence(s).with("Storing '#{ dest }'...")
+          FileUtils.expects(:cp).in_sequence(s).with(src, dest)
 
-        src = File.join(Config.tmp_path, 'test_trigger.tar-ab')
-        dest = File.join(remote_path, 'test_trigger.tar-ab')
-        Logger.expects(:info).in_sequence(s).with("Storing '#{ dest }'...")
-        FileUtils.expects(:cp).in_sequence(s).with(src, dest)
+          src = File.join(Config.tmp_path, 'test_trigger.tar-ab')
+          dest = File.join(remote_path, 'test_trigger.tar-ab')
+          Logger.expects(:info).in_sequence(s).with("Storing '#{ dest }'...")
+          FileUtils.expects(:cp).in_sequence(s).with(src, dest)
 
-        storage.send(:transfer!)
+          storage.send(:transfer!)
+        end
+      end
+
+      context "when usb is not mounted" do
+        before do
+          storage.expects(:mounted?).returns(false)
+        end
+        
+        it 'does not copy the package files to their destination' do
+          Logger.expects(:error)
+          storage.send(:transfer!)
+        end
       end
 
     end # describe '#transfer!'
+
+    describe '#mount_usb' do
+      before do
+        storage.usb_mount = '/mnt/usb'
+      end
+
+      it "mounts the drive" do
+        storage.expects(:mount_points).returns(["/boot", "/home", "/mnt/usb"])
+        storage.send(:mount_usb).should eq(true)
+      end
+    end # describe '#mount_usb'
 
     describe '#mounted?' do
       let(:timestamp) { Time.now.strftime("%Y.%m.%d.%H.%M.%S") }
