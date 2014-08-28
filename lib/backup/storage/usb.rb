@@ -25,6 +25,18 @@ module Backup
         end
       end
 
+      # Test if the USB is mounted or not
+      def mounted?
+        # See if the remote path is included in the mounts
+        puts remote_path
+        mount_points.include?("/mnt/usb")
+      end
+
+      # Get mount points from the system
+      def mount_points
+        `mount`.split("\n").grep(/dev/).map { |x| x.split(" ")[2]  }
+      end
+
       # expanded since this is a local path
       def remote_path(pkg = package)
         File.expand_path(super)
